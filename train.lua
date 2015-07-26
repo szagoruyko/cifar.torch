@@ -12,7 +12,7 @@ opt = lapp[[
    --weightDecay              (default 0.0005)      weightDecay
    -m,--momentum              (default 0.9)         momentum
    --epoch_step               (default 25)          epoch step
-   --model                    (default vgg16bn)     model name
+   --model                    (default vgg_bn_drop)     model name
 ]]
 
 print(opt)
