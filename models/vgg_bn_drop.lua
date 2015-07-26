@@ -1,7 +1,7 @@
 require 'nn'
 require 'cunn'
 
-local backend_name = 'cudnn'
+local backend_name = 'nn'
 
 local backend
 if backend_name == 'cudnn' then
