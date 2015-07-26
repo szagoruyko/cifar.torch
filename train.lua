@@ -148,8 +148,8 @@ function test()
   if testLogger then
     paths.mkdir(opt.save)
     testLogger:add{train_acc, confusion.totalValid * 100}
-    --testLogger:style{'-','-'}
-    --testLogger:plot()
+    testLogger:style{'-','-'}
+    testLogger:plot()
     local file = io.open(opt.save..'/report.html','w')
     local header = [[
     <!DOCTYPE html>
@@ -174,19 +174,18 @@ function test()
     file:close()
     os.execute('convert -density 200 '..opt.save..'/test.log.eps '..opt.save..'/test.png')
   end
-  --[[
-  do
+
+  -- save model every 50 epochs
+  if epoch % 50 == 0 then
     local filename = paths.concat(opt.save, 'model.net')
     print('==> saving model to '..filename)
     torch.save(filename, model:get(3))
   end
-  ]]--
 
   confusion:zero()
 end
 
 
---for i=1,250 do
 while true do
   train()
   test()
