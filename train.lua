@@ -13,6 +13,7 @@ opt = lapp[[
    -m,--momentum              (default 0.9)         momentum
    --epoch_step               (default 25)          epoch step
    --model                    (default vgg_bn_drop)     model name
+   --max_epoch                (default 300)           maximum number of iterations
 ]]
 
 print(opt)
@@ -186,7 +187,7 @@ function test()
 end
 
 
-while true do
+for i=1,opt.max_epoch do
   train()
   test()
 end
