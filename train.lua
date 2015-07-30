@@ -122,17 +122,6 @@ end
 
 
 function test()
-  model:training()
-  print(c.blue '==>'.." doing some iterations on train data for batch normalization")
-  do
-    local indices = torch.randperm(provider.trainData.data:size(1)):long():split(opt.batchSize)
-    for i=101,#indices do indices[i] = nil end
-
-    for i,v in ipairs(indices) do
-      model:forward(provider.trainData.data:index(1,v))
-    end
-  end
-
   -- disable flips, dropouts and batch normalization
   model:evaluate()
   print(c.blue '==>'.." testing")
