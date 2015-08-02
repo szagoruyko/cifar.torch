@@ -85,13 +85,14 @@ function train()
 
   local targets = torch.CudaTensor(opt.batchSize)
   local indices = torch.randperm(provider.trainData.data:size(1)):long():split(opt.batchSize)
+  -- remove last element so that all the batches have equal size
   indices[#indices] = nil
 
   local tic = torch.tic()
   for t,v in ipairs(indices) do
     xlua.progress(t, #indices)
 
-    inputs = provider.trainData.data:index(1,v)
+    local inputs = provider.trainData.data:index(1,v)
     targets:copy(provider.trainData.labels:index(1,v))
 
     local feval = function(x)
