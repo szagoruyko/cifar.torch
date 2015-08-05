@@ -129,7 +129,7 @@ function test()
   local n = provider.testData.data:size(1)
   local bs = 125
   for i=1,n,bs do
-    _,y = model:forward(provider.testData.data:narrow(1,i,bs)):max(2)
+    local _,y = model:forward(provider.testData.data:narrow(1,i,bs)):max(2)
     confusion:batchAdd(y,provider.testData.labels:narrow(1,i,bs))
   end
 
