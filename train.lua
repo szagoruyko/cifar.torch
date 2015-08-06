@@ -126,11 +126,10 @@ function test()
   -- disable flips, dropouts and batch normalization
   model:evaluate()
   print(c.blue '==>'.." testing")
-  local n = provider.testData.data:size(1)
   local bs = 125
-  for i=1,n,bs do
-    local _,y = model:forward(provider.testData.data:narrow(1,i,bs)):max(2)
-    confusion:batchAdd(y,provider.testData.labels:narrow(1,i,bs))
+  for i=1,provider.testData.data:size(1),bs do
+    local outputs = model:forward(provider.testData.data:narrow(1,i,bs))
+    confusion:batchAdd(outputs, provider.testData.labels:narrow(1,i,bs))
   end
 
   confusion:updateValids()
