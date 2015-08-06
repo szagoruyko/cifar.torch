@@ -1,6 +1,6 @@
 require 'xlua'
 require 'optim'
-require 'cutorch'
+require 'cunn'
 dofile './provider.lua'
 local c = require 'trepl.colorize'
 
@@ -49,6 +49,8 @@ print(model)
 
 print(c.blue '==>' ..' loading data')
 provider = torch.load 'provider.t7'
+provider.trainData.data = provider.trainData.data:float()
+provider.testData.data = provider.testData.data:float()
 
 confusion = optim.ConfusionMatrix(10)
 
@@ -56,6 +58,7 @@ print('Will save at '..opt.save)
 paths.mkdir(opt.save)
 testLogger = optim.Logger(paths.concat(opt.save, 'test.log'))
 testLogger:setNames{'% mean class accuracy (train set)', '% mean class accuracy (test set)'}
+testLogger.showPlot = false
 
 parameters,gradParameters = model:getParameters()
 
@@ -140,18 +143,25 @@ function test()
     testLogger:add{train_acc, confusion.totalValid * 100}
     testLogger:style{'-','-'}
     testLogger:plot()
+
+    local base64im
+    do
+      os.execute(('convert -density 200 %s/test.log.eps %s/test.png'):format(opt.save,opt.save))
+      os.execute(('openssl base64 -in %s/test.png -out %s/test.base64'):format(opt.save,opt.save))
+      local f = io.open(opt.save..'/test.base64')
+      if f then base64im = f:read'*all' end
+    end
+
     local file = io.open(opt.save..'/report.html','w')
-    local header = [[
+    file:write(([[
     <!DOCTYPE html>
     <html>
     <body>
-    <title>$SAVE - $EPOCH</title>
-    <img src="test.png">
-    ]]
-    header = header:gsub('$SAVE',opt.save):gsub('$EPOCH',epoch)
-    file:write(header)
-    file:write'<h4>optimState:</h4>\n'
-    file:write'<table>\n'
+    <title>%s - %s</title>
+    <img src="data:image/png;base64,%s">
+    <h4>optimState:</h4>
+    <table>
+    ]]):format(opt.save,epoch,base64im))
     for k,v in pairs(optimState) do
       if torch.type(v) == 'number' then
         file:write('<tr><td>'..k..'</td><td>'..v..'</td></tr>\n')
@@ -160,9 +170,8 @@ function test()
     file:write'</table><pre>\n'
     file:write(tostring(confusion)..'\n')
     file:write(tostring(model)..'\n')
-    file:write("</pre></body></html>")
+    file:write'</pre></body></html>'
     file:close()
-    os.execute('convert -density 200 '..opt.save..'/test.log.eps '..opt.save..'/test.png')
   end
 
   -- save model every 50 epochs
