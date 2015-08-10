@@ -16,7 +16,7 @@ Would be nice to add other architectures, PRs are welcome!
 Data preprocessing:
 
 ```bash
-th -i provider.lua
+OMP_NUM_THREADS=2 th -i provider.lua
 ```
 
 ```lua
@@ -24,7 +24,7 @@ provider = Provider()
 provider:normalize()
 torch.save('provider.t7',provider)
 ```
-Takes about 40 minutes and saves 1400 Mb file.
+Takes about 30 seconds and saves 1400 Mb file.
 
 Training:
 
