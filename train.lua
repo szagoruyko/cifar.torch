@@ -74,7 +74,6 @@ optimState = {
   momentum = opt.momentum,
   learningRateDecay = opt.learningRateDecay,
 }
-optimMethod = optim.sgd
 
 
 function train()
