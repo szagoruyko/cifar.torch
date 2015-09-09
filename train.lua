@@ -43,7 +43,7 @@ print(c.blue '==>' ..' configuring model')
 local model = nn.Sequential()
 model:add(nn.BatchFlip():float())
 model:add(nn.Copy('torch.FloatTensor','torch.CudaTensor'):cuda())
-model:add(nn.Sequential():add(dofile('models/'..opt.model..'.lua'):cuda()))
+model:add(dofile('models/'..opt.model..'.lua'):cuda())
 model:get(2).updateGradInput = function(input) return end
 print(model)
 
