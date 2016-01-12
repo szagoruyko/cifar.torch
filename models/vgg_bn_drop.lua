@@ -43,9 +43,6 @@ ConvBNReLU(512,512):add(nn.Dropout(0.4))
 ConvBNReLU(512,512)
 vgg:add(MaxPooling(2,2,2,2):ceil())
 
--- In the last block of convolutions the inputs are smaller than
--- the kernels and cudnn doesn't handle that, have to use cunn
-backend = nn
 ConvBNReLU(512,512):add(nn.Dropout(0.4))
 ConvBNReLU(512,512):add(nn.Dropout(0.4))
 ConvBNReLU(512,512)
