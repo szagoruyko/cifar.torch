@@ -14,6 +14,7 @@ opt = lapp[[
    --epoch_step               (default 25)          epoch step
    --model                    (default vgg_bn_drop)     model name
    --max_epoch                (default 300)           maximum number of iterations
+   --backend                  (default nn)            backend
 ]]
 
 print(opt)
@@ -45,6 +46,12 @@ model:add(nn.BatchFlip():float())
 model:add(nn.Copy('torch.FloatTensor','torch.CudaTensor'):cuda())
 model:add(dofile('models/'..opt.model..'.lua'):cuda())
 model:get(2).updateGradInput = function(input) return end
+
+if opt.backend == 'cudnn' then
+   require 'cudnn'
+   cudnn.convert(model:get(3), cudnn)
+end
+
 print(model)
 
 print(c.blue '==>' ..' loading data')

@@ -1,29 +1,18 @@
 require 'nn'
-require 'cunn'
 
-local backend_name = 'nn'
-
-local backend
-if backend_name == 'cudnn' then
-  require 'cudnn'
-  backend = cudnn
-else
-  backend = nn
-end
-  
 local vgg = nn.Sequential()
 
 -- building block
 local function ConvBNReLU(nInputPlane, nOutputPlane)
-  vgg:add(backend.SpatialConvolution(nInputPlane, nOutputPlane, 3,3, 1,1, 1,1))
+  vgg:add(nn.SpatialConvolution(nInputPlane, nOutputPlane, 3,3, 1,1, 1,1))
   vgg:add(nn.SpatialBatchNormalization(nOutputPlane,1e-3))
-  vgg:add(backend.ReLU(true))
+  vgg:add(nn.ReLU(true))
   return vgg
 end
 
 -- Will use "ceil" MaxPooling because we want to save as much
 -- space as we can
-local MaxPooling = backend.SpatialMaxPooling
+local MaxPooling = nn.SpatialMaxPooling
 
 ConvBNReLU(3,64):add(nn.Dropout(0.3))
 ConvBNReLU(64,64)
@@ -68,7 +57,6 @@ local function MSRinit(net)
     end
   end
   -- have to do for both backends
-  init'cudnn.SpatialConvolution'
   init'nn.SpatialConvolution'
 end
 
