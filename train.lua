@@ -35,7 +35,7 @@ do -- data augmentation module
         if flip_mask[i] == 1 then image.hflip(input[i], input[i]) end
       end
     end
-    self.output = input
+    self.output:set(input)
     return self.output
   end
 end
@@ -184,7 +184,7 @@ function test()
   if epoch % 50 == 0 then
     local filename = paths.concat(opt.save, 'model.net')
     print('==> saving model to '..filename)
-    torch.save(filename, model:get(3))
+    torch.save(filename, model:get(3):clearState())
   end
 
   confusion:zero()
