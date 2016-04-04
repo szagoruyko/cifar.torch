@@ -13,6 +13,9 @@ for _, f in ipairs(arg) do
   end
 end
 
+local model_path = arg[1]
+local image_paths = tablex.sub(arg, 2, -1)
+
 -- loads the normalization parameters
 require 'provider'
 local provider = torch.load 'provider.t7'
@@ -41,7 +44,7 @@ local function normalize(imgRGB)
   return yuv
 end
 
-local model = torch.load(arg[1])
+local model = torch.load(model_path)
 model:add(nn.SoftMax():cuda())
 model:evaluate()
 
@@ -55,15 +58,23 @@ end
 local cls = {'airplane', 'automobile', 'bird', 'cat',
              'deer', 'dog', 'frog', 'horse', 'ship', 'truck'}
 
-for i = 2, #arg do
-  local img = image.load(arg[i], 3, 'float'):mul(255)
+for _, img_path in ipairs(image_paths) do
+  -- load image
+  local img = image.load(img_path, 3, 'float'):mul(255)
 
+  -- resize it to 32x32
   img = image.scale(img, 32, 32)
+  -- normalize
   img = normalize(img)
-  img = img:view(1,3,32,32)
+  -- make it batch mode (for BatchNormalization)
+  img = img:view(1, 3, 32, 32)
+
+  -- get probabilities
   local output = model:forward(img:cuda()):squeeze()
-  print('Probabilities for '..arg[i])
+
+  -- display
+  print('Probabilities for '..img_path)
   for cl_id, cl in ipairs(cls) do
-    print(string.format('%-10s: %-05.2f%%', cl, output[cl_id]*100))
+    print(string.format('%-10s: %-05.2f%%', cl, output[cl_id] * 100))
   end
 end
