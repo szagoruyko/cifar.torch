@@ -1,5 +1,7 @@
 # cifar.torch
 
+**Newer version of this code is included in https://github.com/szagoruyko/wide-residual-networks**
+
 The code achieves 92.45% accuracy on CIFAR-10 just with horizontal reflections.
 
 Corresponding blog post: http://torch.ch/blog/2015/07/30/cifar.html
