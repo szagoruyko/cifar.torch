@@ -64,6 +64,7 @@ model:get(2).updateGradInput = function(input) return end
 
 if opt.backend == 'cudnn' then
    require 'cudnn'
+   cudnn.benchmark=true
    cudnn.convert(model:get(3), cudnn)
 end
 
